@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
+body {
+  font-family: 'UnifrakturCook', cursive;
+  background: url('https://www.toptal.com/designers/subtlepatterns/uploads/old_map.png');
+  background-size: cover;
+  text-align: center;
+  color: #3e2723;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #f4e4c1 url('https://www.toptal.com/designers/subtlepatterns/uploads/old_paper.png') repeat;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border: 3px solid #8b5a2b;
+}
+
+h1, h2 {
+  color: #5e3b1c;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.resources {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  font-size: 20px;
+  padding: 10px;
+  background: #d4c2a8 url('https://www.toptal.com/designers/subtlepatterns/uploads/wood_pattern.png') repeat;
+  border-radius: 10px;
+  border: 2px solid #8b5a2b;
+  margin-bottom: 20px;
+}
+
+.resources p {
+  margin: 5px 10px;
+}
+
+.troops {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  font-size: 18px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+/* Tab-Navigation */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 3px solid #5e3b1c;
+  background: linear-gradient(to bottom, #8b5a2b, #5e3b1c);
+  color: white;
+  border-radius: 10px;
+  font-family: 'UnifrakturCook', cursive;
+  transition: background 0.3s;
+}
+
+.tab-button.active {
+  background: linear-gradient(to bottom, #5e3b1c, #3e2723);
+}
+
+.tab-button:hover {
+  background: linear-gradient(to bottom, #5e3b1c, #3e2723);
+}
+
+/* Inhalte der Tabs */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+button {
+  margin: 3px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 3px solid #5e3b1c;
+  background: linear-gradient(to bottom, #8b5a2b, #5e3b1c), url('https://www.toptal.com/designers/subtlepatterns/uploads/wood_texture.jpg');
+  background-blend-mode: multiply;
+  color: white;
+  border-radius: 10px;
+  font-family: 'UnifrakturCook', cursive;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(to bottom, #5e3b1c, #3e2723), url('https://www.toptal.com/designers/subtlepatterns/uploads/wood_texture.jpg');
+  background-blend-mode: multiply;
+}
+
+#timer {
+  font-size: 20px;
+  margin: 10px 0;
+  color: #5e3b1c;
+}
+
+#log {
+  border: 5px solid #5e3b1c;
+  height: 250px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding: 10px;
+  background: url('https://www.toptal.com/designers/subtlepatterns/uploads/old_paper.png');
+  border-radius: 15px;
+  font-size: 18px;
+  text-align: left;
+}
+
+#log p {
+  margin: 5px 0;
+}
+
+/* Eingabefeld für Befehle */
+#commandContainer {
+  margin: 10px 0;
+}
+#commandInput {
+  padding: 8px;
+  font-size: 16px;
+  width: 60%;
+  border: 3px solid #5e3b1c;
+  border-radius: 10px;
+  font-family: 'UnifrakturCook', cursive;
+}
+.hidden {
+    display: none;
+}

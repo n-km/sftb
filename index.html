@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stronghold Fighter (Textbasiert)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body id="BD">
+  <div class="container">
+    <h1>🏰 Stronghold Fighter (Textbasiert) 🏰</h1> <h5><a href="wiki.html" target="_blank">📖 WIKI</a></h5>
+    
+    <div class="resources">
+      <p><strong>💰 Gold:</strong> <span id="gold">100</span></p>
+      <p><strong>🍞 Nahrung:</strong> <span id="food">50</span></p>
+      <p><strong>🪵 Holz:</strong> <span id="wood">30</span></p>
+      <p><strong>🛡️ Verteidigungsbonus:</strong> <span id="defenseBonus">0</span></p>
+    </div>
+    
+    <h2>🛡️ Truppen</h2>
+    <div class="troops">
+      <p>🏹 Bogenschützen: <span id="archers">0</span></p>
+      <p>⚔️ Schwertkämpfer: <span id="swordsmen">0</span></p>
+      <p>🛡️ Lanzenkämpfer: <span id="spearmen">0</span></p>
+      <p>🐎 Ritter: <span id="knights">0</span></p>
+      <p>🛠️ Katapulte: <span id="catapults">0</span></p>
+      <p>🪓 Holzfäller: <span id="woodcutters">0</span> (L: <span id="woodcutterLevel">1</span>)</p>
+      <p>🍏 Apfelsammler: <span id="appleGatherers">0</span> (L: <span id="appleGathererLevel">1</span>)</p>
+    </div>
+    
+    <!-- Tab-Navigation -->
+    <div class="tab-buttons">
+      <button class="tab-button active" onclick="showTab('combat', this)">⚔️ Kampftruppen</button>
+      <button class="tab-button" onclick="showTab('resources', this)">🛠️ Ressourcen & Upgrades</button>
+      <button class="tab-button" onclick="showTab('special', this)">✨ Spezialaktionen</button>
+    </div>
+    
+    <!-- Tab-Inhalte -->
+    <div id="combat" class="tab-content active">
+      <div class="actions">
+        <button onclick="kaufeBogenschuetze()">🏹 Bogenschütze (-50💰, -5🍞)</button>
+        <button onclick="kaufeSchwertkaempfer()">⚔️ Schwertkämpfer (-75💰, -10🍞)</button>
+        <button onclick="kaufeLanzenkaempfer()">🛡️ Lanzenkämpfer (-30💰, -5🍞)</button>
+        <button onclick="kaufeRitter()">🐎 Ritter (-150💰, -20🍞)</button>
+        <button onclick="kaufeKatapult()">🛠️ Katapult (-200💰, -50🪵)</button>
+      </div>
+    </div>
+    
+    <div id="resources" class="tab-content">
+      <div class="actions">
+        <button onclick="kaufeHolzfaehler()">🪓 Holzfäller (-40💰, -5🍞)</button>
+        <button onclick="upgradeHolzfaehler()">🔧 Holzfäller upgradieren</button>
+        <button onclick="kaufeApfelsammler()">🍏 Apfelsammler (-40💰, -5🪵)</button>
+        <button onclick="upgradeApfelsammler()">🔧 Apfelsammler upgradieren</button>
+      </div>
+    </div>
+    
+    <div id="special" class="tab-content">
+      <div class="actions">
+        <button onclick="sammleRessourcen()">🛠️ Ressourcen sammeln (+20💰, +10🍞, +5🪵)</button>
+        <button onclick="handel()">💱 Handel: 20🍞 gegen 40💰</button>
+        <button onclick="burgVerstaerken()">🏰 Burg verstärken (-50💰, -30🪵)</button>
+        <button onclick="spionage()">🕵️ Spionage</button>
+        <button onclick="training()">💪 Training (-50💰)</button>
+        <button onclick="angriff()">⚔️ Angriff starten</button>
+      </div>
+    </div>
+    
+    <!-- Timer-Anzeige -->
+    <p id="timer">Nächste Ernte in: 10 Sekunden</p>
+    
+    <h2>📜 Ereignisse</h2>
+    <div id="log">
+      <p>Willkommen, mein Lord!</p>
+    </div>
+    
+    <!-- Kommando-Eingabe -->
+    <div id="commandContainer">
+      <input type="text" id="commandInput" placeholder="Geben Sie Ihren Befehl ein..." />
+      <button onclick="submitCommand()">Senden</button>
+    </div>
+  </div>
+  
+  <script>
+    // Ressourcen, Truppen, Boni & Level
+    let gold = 100, food = 50, wood = 30;
+    let archers = 0, swordsmen = 0, spearmen = 0, knights = 0, catapults = 0;
+    let woodcutters = 0, appleGatherers = 0;
+    let woodcutterLevel = 1, appleGathererLevel = 1;
+    let defenseBonus = 0, attackBonus = 0;
+    
+    function updateUI() {
+      document.getElementById("gold").innerText = gold;
+      document.getElementById("food").innerText = food;
+      document.getElementById("wood").innerText = wood;
+      document.getElementById("archers").innerText = archers;
+      document.getElementById("swordsmen").innerText = swordsmen;
+      document.getElementById("spearmen").innerText = spearmen;
+      document.getElementById("knights").innerText = knights;
+      document.getElementById("catapults").innerText = catapults;
+      document.getElementById("woodcutters").innerText = woodcutters;
+      document.getElementById("woodcutterLevel").innerText = woodcutterLevel;
+      document.getElementById("appleGatherers").innerText = appleGatherers;
+      document.getElementById("appleGathererLevel").innerText = appleGathererLevel;
+      document.getElementById("defenseBonus").innerText = defenseBonus;
+    }
+    
+    function logMessage(message) {
+      const logDiv = document.getElementById("log");
+      const time = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `<p>[${time}] ${message}</p>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+    
+    // Manuelle Aktionen
+    function sammleRessourcen() {
+      gold += 20; food += 10; wood += 5;
+      updateUI();
+      logMessage("Ressourcen gesammelt: +20💰, +10🍞, +5🪵.");
+    }
+    
+    // Rekrutierung Kampftruppen
+    function kaufeBogenschuetze() {
+      if (gold >= 50 && food >= 5) { gold -= 50; food -= 5; archers++;
+        updateUI(); logMessage("🏹 Bogenschütze rekrutiert!");
+      } else { logMessage("Nicht genug Ressourcen für einen Bogenschützen."); }
+    }
+    function kaufeSchwertkaempfer() {
+      if (gold >= 75 && food >= 10) { gold -= 75; food -= 10; swordsmen++;
+        updateUI(); logMessage("⚔️ Schwertkämpfer rekrutiert!");
+      } else { logMessage("Nicht genug Ressourcen für einen Schwertkämpfer."); }
+    }
+    function kaufeLanzenkaempfer() {
+      if (gold >= 30 && food >= 5) { gold -= 30; food -= 5; spearmen++;
+        updateUI(); logMessage("🛡️ Lanzenkämpfer rekrutiert!");
+      } else { logMessage("Nicht genug Ressourcen für einen Lanzenkämpfer."); }
+    }
+    function kaufeRitter() {
+      if (gold >= 150 && food >= 20) { gold -= 150; food -= 20; knights++;
+        updateUI(); logMessage("🐎 Ritter rekrutiert!");
+      } else { logMessage("Nicht genug Ressourcen für einen Ritter."); }
+    }
+    function kaufeKatapult() {
+      if (gold >= 200 && wood >= 50) { gold -= 200; wood -= 50; catapults++;
+        updateUI(); logMessage("🛠️ Katapult gebaut!");
+      } else { logMessage("Nicht genug Ressourcen für ein Katapult."); }
+    }
+    
+    // Ressourcentruppen & Upgrades
+    function kaufeHolzfaehler() {
+      if (gold >= 40 && food >= 5) { gold -= 40; food -= 5; woodcutters++;
+        updateUI(); logMessage("🪓 Holzfäller rekrutiert!");
+      } else { logMessage("Nicht genug Ressourcen für einen Holzfäller."); }
+    }
+    function upgradeHolzfaehler() {
+      let costGold = 50 * woodcutterLevel, costFood = 10 * woodcutterLevel;
+      if (gold >= costGold && food >= costFood) { gold -= costGold; food -= costFood; woodcutterLevel++;
+        updateUI(); logMessage("🪓 Holzfäller aufgewertet! Neuer Ertrag: " + (5 * woodcutterLevel) + "🪵 pro Holzfäller.");
+      } else { logMessage("Nicht genug Ressourcen, um Holzfäller aufzuwerten."); }
+    }
+    function kaufeApfelsammler() {
+      if (gold >= 40 && wood >= 5) { gold -= 40; wood -= 5; appleGatherers++;
+        updateUI(); logMessage("🍏 Apfelsammler rekrutiert!");
+      } else { logMessage("Nicht genug Ressourcen für einen Apfelsammler."); }
+    }
+    function upgradeApfelsammler() {
+      let costGold = 50 * appleGathererLevel, costWood = 10 * appleGathererLevel;
+      if (gold >= costGold && wood >= costWood) { gold -= costGold; wood -= costWood; appleGathererLevel++;
+        updateUI(); logMessage("🍏 Apfelsammler aufgewertet! Neuer Ertrag: " + (5 * appleGathererLevel) + "🍞 pro Apfelsammler.");
+      } else { logMessage("Nicht genug Ressourcen, um Apfelsammler aufzuwerten."); }
+    }
+    
+    // Spezialaktionen
+    function handel() {
+      if (food >= 20) { food -= 20; gold += 40;
+        updateUI(); logMessage("💱 Handel: 20🍞 wurden gegen 40💰 getauscht.");
+      } else { logMessage("Nicht genug Nahrung für den Handel."); }
+    }
+    function burgVerstaerken() {
+      if (gold >= 50 && wood >= 30) { gold -= 50; wood -= 30; defenseBonus += 2;
+        updateUI(); logMessage("🏰 Burg verstärkt! Verteidigungsbonus +2.");
+      } else { logMessage("Nicht genug Ressourcen, um die Burg zu verstärken."); }
+    }
+    function spionage() {
+      let enemyIntel = Math.floor(Math.random() * 11) + 5;
+      logMessage("🕵️ Spionage: Gegnerstärke ca. " + enemyIntel + ".");
+    }
+    function training() {
+      if (gold >= 50) { gold -= 50; attackBonus = 5;
+        updateUI(); logMessage("💪 Training abgeschlossen: Angriff Bonus +5.");
+      } else { logMessage("Nicht genug Gold für das Training."); }
+    }
+    
+    // Angriff inkl. Truppenverluste
+    function angriff() {
+      logMessage("⚔️ Angriff gestartet!");
+      let enemyStrength = Math.floor(Math.random() * 10) + 5;
+      let playerStrength = (archers * 3) + (swordsmen * 5) + (spearmen * 4) + (knights * 7) + (catapults * 10) + attackBonus + defenseBonus;
+      
+      if (playerStrength >= enemyStrength) {
+        gold += 50; food += 20;
+        logMessage("Sieg! Deine Truppen haben den Feind besiegt.");
+        let archersLost = Math.ceil(archers * 0.1);
+        let swordsmenLost = Math.ceil(swordsmen * 0.1);
+        let spearmenLost = Math.ceil(spearmen * 0.1);
+        let knightsLost = Math.ceil(knights * 0.1);
+        let catapultsLost = Math.ceil(catapults * 0.1);
+        archers = Math.max(archers - archersLost, 0);
+        swordsmen = Math.max(swordsmen - swordsmenLost, 0);
+        spearmen = Math.max(spearmen - spearmenLost, 0);
+        knights = Math.max(knights - knightsLost, 0);
+        catapults = Math.max(catapults - catapultsLost, 0);
+        logMessage("Verluste: " +
+          (archersLost ? archersLost + " Bogenschützen, " : "") +
+          (swordsmenLost ? swordsmenLost + " Schwertkämpfer, " : "") +
+          (spearmenLost ? spearmenLost + " Lanzenkämpfer, " : "") +
+          (knightsLost ? knightsLost + " Ritter, " : "") +
+          (catapultsLost ? catapultsLost + " Katapulte" : "")
+        );
+      } else {
+        logMessage("Niederlage! Deine Armee wurde zurückgeschlagen.");
+        let archersLost = Math.ceil(archers * 0.3);
+        let swordsmenLost = Math.ceil(swordsmen * 0.3);
+        let spearmenLost = Math.ceil(spearmen * 0.3);
+        let knightsLost = Math.ceil(knights * 0.3);
+        let catapultsLost = Math.ceil(catapults * 0.3);
+        archers = Math.max(archers - archersLost, 0);
+        swordsmen = Math.max(swordsmen - swordsmenLost, 0);
+        spearmen = Math.max(spearmen - spearmenLost, 0);
+        knights = Math.max(knights - knightsLost, 0);
+        catapults = Math.max(catapults - catapultsLost, 0);
+        logMessage("Verluste: " +
+          (archersLost ? archersLost + " Bogenschützen, " : "") +
+          (swordsmenLost ? swordsmenLost + " Schwertkämpfer, " : "") +
+          (spearmenLost ? spearmenLost + " Lanzenkämpfer, " : "") +
+          (knightsLost ? knightsLost + " Ritter, " : "") +
+          (catapultsLost ? catapultsLost + " Katapulte" : "")
+        );
+      }
+      attackBonus = 0;
+      updateUI();
+    }
+    
+    // Automatischer Ressourcenzyklus (alle 10 Sekunden)
+    function resourceCycle() {
+      let woodGained = woodcutters * 5 * woodcutterLevel;
+      let foodGained = appleGatherers * 5 * appleGathererLevel;
+      wood += woodGained; food += foodGained;
+      updateUI();
+      logMessage("Sammlung: Holzfäller sammelten " + woodGained + "🪵, Apfelsammler " + foodGained + "🍞.");
+    }
+    
+    // Timer (10-Sekunden-Zyklus)
+    let countdown = 10;
+    setInterval(function() {
+      countdown--;
+      document.getElementById("timer").innerText = "Nächste Ernte in: " + countdown + " Sekunden";
+      if (countdown <= 0) { resourceCycle(); countdown = 10; }
+    }, 1000);
+    
+    // Tab-Navigation
+    function showTab(tabName, btn) {
+      let tabs = document.getElementsByClassName("tab-content");
+      for (let i = 0; i < tabs.length; i++) { tabs[i].classList.remove("active"); }
+      document.getElementById(tabName).classList.add("active");
+      let buttons = document.getElementsByClassName("tab-button");
+      for (let i = 0; i < buttons.length; i++) { buttons[i].classList.remove("active"); }
+      btn.classList.add("active");
+    }
+    
+    // Kommando-Verarbeitung
+    function submitCommand() {
+      let cmd = document.getElementById("commandInput").value;
+      if (cmd.trim() !== "") {
+        logMessage("Befehl eingegeben: " + cmd);
+        processCommand(cmd);
+        document.getElementById("commandInput").value = "";
+      }
+    }
+    
+    function processCommand(command) {
+      command = command.toLowerCase().trim();
+      if (command === "help") {
+        logMessage("Verfügbare Befehle: rekrut bogenschuetze, rekrut schwertkaempfer, rekrut lanzenkaempfer, rekrut ritter, rekrut katapult, rekrut holzfaehler, upgrade holzfaehler, rekrut apfelsammler, upgrade apfelsammler, sammle ressourcen, handel, burg verstärken, spionage, training, angriff");
+        return;
+      }
+      if (command === "rekrut bogenschuetze") { kaufeBogenschuetze(); return; }
+      if (command === "rekrut schwertkaempfer") { kaufeSchwertkaempfer(); return; }
+      if (command === "rekrut lanzenkaempfer") { kaufeLanzenkaempfer(); return; }
+      if (command === "rekrut ritter") { kaufeRitter(); return; }
+      if (command === "rekrut katapult") { kaufeKatapult(); return; }
+      if (command === "rekrut holzfaehler" || command === "rekrut holzfäller") { kaufeHolzfaehler(); return; }
+      if (command === "upgrade holzfaehler" || command === "upgrade holzfäller") { upgradeHolzfaehler(); return; }
+      if (command === "rekrut apfelsammler") { kaufeApfelsammler(); return; }
+      if (command === "upgrade apfelsammler") { upgradeApfelsammler(); return; }
+      if (command === "sammle ressourcen") { sammleRessourcen(); return; }
+      if (command === "handel") { handel(); return; }
+      if (command === "burg verstärken" || command === "burg verstaerken") { burgVerstaerken(); return; }
+      if (command === "spionage") { spionage(); return; }
+      if (command === "training") { training(); return; }
+      if (command === "angriff") { angriff(); return; }
+      logMessage("Unbekannter Befehl: " + command);
+    }
+    
+    // Enter-Taste im Eingabefeld abfangen
+    document.getElementById("commandInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") { submitCommand(); }
+    });
+    
+    updateUI();
+  </script>
+</body>
+</html>

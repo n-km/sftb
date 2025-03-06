@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spiel-Wiki</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <form action="index.html"><button>Zurück zum Spiel</button></form>
+        <nav class="sidebar">
+            <button class="tab" onclick="showPage('uebersicht')">Übersicht</button>
+            <button class="tab" onclick="showPage('charaktere')">Charaktere</button>
+            <button class="tab" onclick="showPage('ressourcen')">Ressourcensammler</button>
+            <button class="tab" onclick="showPage('gegenstaende')">Gegenstände</button>
+            <button class="tab" onclick="showPage('kaempfe')">Kämpfe</button>
+            <button class="tab" onclick="showPage('upgrades')">Upgrades</button>
+            <button class="tab" onclick="showPage('befehle')">Befehle</button>
+        </nav>
+        <main class="content">
+            <section id="uebersicht" class="page">Willkommen zur Wiki! Hier findest du alles über das Spiel.</section>
+            <section id="charaktere" class="page hidden">
+                <h2>Truppen</h2>
+                <ul>
+                    <li>Schwertkämpfer - Nahkampfeinheit mit mittlerer Rüstung.</li>
+                    <li>Bogenschütze - Fernkampfeinheit mit hoher Reichweite.</li>
+                    <li>Ritter - Starke Eliteeinheit mit hoher Verteidigung.</li>
+                </ul>
+            </section>
+            <section id="ressourcen" class="page hidden">
+                <h2>Ressourcensammler</h2>
+                <ul>
+                    <li>Holzfäller - Sammelt Holz alle 10 Sekunden.</li>
+                    <li>Bauer - Produziert Nahrung (Äpfel) regelmäßig.</li>
+                </ul>
+            </section>
+            <section id="gegenstaende" class="page hidden">
+                <h2>Wichtige Gegenstände</h2>
+                <ul>
+                    <li>Schwert - Erhöht den Angriff von Nahkampfeinheiten.</li>
+                    <li>Bogen - Verbessert die Reichweite der Bogenschützen.</li>
+                    <li>Schild - Erhöht die Verteidigung der Ritter.</li>
+                </ul>
+            </section>
+            <section id="kaempfe" class="page hidden">
+                <h2>Kampfsystem</h2>
+                <p>Truppen können in Kämpfe geschickt werden. Beim Angriff gibt es Verluste, basierend auf der Stärke des Gegners.</p>
+                <h3>Strategien</h3>
+                <ul>
+                    <li>Nutze Bogenschützen zur Verteidigung.</li>
+                    <li>Ritter sind effektiv gegen große Gegnergruppen.</li>
+                    <li>Mische Einheiten für optimale Ergebnisse.</li>
+                </ul>
+            </section>
+            <section id="upgrades" class="page hidden">
+                <h2>Upgrades</h2>
+                <ul>
+                    <li>Schwertverbesserung - Erhöht Angriffskraft.</li>
+                    <li>Bogentraining - Erhöht Trefferquote.</li>
+                    <li>Rüstungsverstärkung - Erhöht Verteidigung.</li>
+                </ul>
+            </section>
+            <section id="befehle" class="page hidden">
+                <h2>Befehle</h2>
+                <p>Alle Aktionen können über Befehle im Log-Fenster gesteuert werden.</p>
+                <ul>
+                    <li><strong>/rekrutiere [Einheit]</strong> - Rekrutiert eine neue Einheit.</li>
+                    <li><strong>/upgrade [Upgrade]</strong> - Führt eine Verbesserung durch.</li>
+                    <li><strong>/angriff [Ziel]</strong> - Startet einen Angriff.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
