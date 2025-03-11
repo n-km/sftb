@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCRUM Multiple-Choice-Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .quiz-container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c5282;
+        }
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .answer-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .answer-button:hover {
+            background-color: #f0f0f0;
+        }
+        .correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        .explanation {
+            background-color: #e6f0ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .next-button, .reset-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .next-button:hover, .reset-button:hover {
+            background-color: #2b6cb0;
+        }
+        .progress-container {
+            margin-bottom: 20px;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #3182ce;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        .result {
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>SCRUM Multiple-Choice-Test</h1>
+        
+        <div id="quiz-section">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="question-number">Frage 1 von 10</span>
+                    <span id="score-display">Punktestand: 0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="question" id="question-text"></div>
+            
+            <div id="answers-container"></div>
+            
+            <div class="explanation hidden" id="explanation-box">
+                <h3>Erklärung:</h3>
+                <p id="explanation-text"></p>
+            </div>
+            
+            <button class="next-button hidden" id="next-button">Nächste Frage</button>
+        </div>
+        
+        <div id="results-section" class="result hidden">
+            <h2 id="final-score">Ergebnis: 0 von 10 Punkten (0%)</h2>
+            <p id="feedback-text"></p>
+            <button class="reset-button" id="reset-button">Test neu starten</button>
+        </div>
+    </div>
+    
+    <script>
+        // Quiz-Daten
+        const questions = [
+            {
+                questionText: 'Was ist SCRUM?',
+                answerOptions: [
+                    { answerText: 'Ein detaillierter Projektplan mit festen Meilensteinen', isCorrect: false },
+                    { answerText: 'Ein agiles Framework zur iterativen und inkrementellen Produktentwicklung', isCorrect: true },
+                    { answerText: 'Eine Software zur automatischen Codegenerierung', isCorrect: false },
+                    { answerText: 'Eine hierarchische Managementmethode', isCorrect: false }
+                ],
+                explanation: 'SCRUM ist ein agiles Framework, das auf kurze Entwicklungszyklen (Sprints) und selbstorganisierte Teams setzt, anstatt auf feste Planung.'
+            },
+            {
+                questionText: 'Welche der folgenden Aussagen beschreibt NICHT ein Grundprinzip von SCRUM?',
+                answerOptions: [
+                    { answerText: 'Transparenz', isCorrect: false },
+                    { answerText: 'Überprüfung', isCorrect: false },
+                    { answerText: 'Anpassungsfähigkeit', isCorrect: false },
+                    { answerText: 'Detaillierte Vorausplanung', isCorrect: true }
+                ],
+                explanation: 'Die drei Grundprinzipien von SCRUM sind Transparenz, Überprüfung und Anpassungsfähigkeit. Detaillierte Vorausplanung widerspricht dem agilen Ansatz von SCRUM.'
+            },
+            {
+                questionText: 'Welche Rolle ist NICHT Teil des SCRUM-Teams?',
+                answerOptions: [
+                    { answerText: 'Product Owner', isCorrect: false },
+                    { answerText: 'SCRUM Master', isCorrect: false },
+                    { answerText: 'Projektmanager', isCorrect: true },
+                    { answerText: 'Entwicklungsteam', isCorrect: false }
+                ],
+                explanation: 'Die drei Rollen in SCRUM sind Product Owner, SCRUM Master und das Entwicklungsteam. Ein klassischer Projektmanager ist kein Teil von SCRUM, da die Verantwortung auf die drei SCRUM-Rollen verteilt ist.'
+            },
+            {
+                questionText: 'Wofür ist der Product Owner verantwortlich?',
+                answerOptions: [
+                    { answerText: 'Priorisierung und Verwaltung des Product Backlogs', isCorrect: true },
+                    { answerText: 'Beseitigung von Hindernissen für das Team', isCorrect: false },
+                    { answerText: 'Durchführung des Daily SCRUM', isCorrect: false },
+                    { answerText: 'Technische Implementierung der Anforderungen', isCorrect: false }
+                ],
+                explanation: 'Der Product Owner ist für die Priorisierung und Verwaltung des Product Backlogs verantwortlich. Er vertritt die Interessen der Kunden und Stakeholder.'
+            },
+            {
+                questionText: 'Wie lange sollte ein Daily SCRUM maximal dauern?',
+                answerOptions: [
+                    { answerText: '5 Minuten', isCorrect: false },
+                    { answerText: '15 Minuten', isCorrect: true },
+                    { answerText: '30 Minuten', isCorrect: false },
+                    { answerText: '60 Minuten', isCorrect: false }
+                ],
+                explanation: 'Das Daily SCRUM (Stand-up-Meeting) sollte maximal 15 Minuten dauern. Es ist ein kurzes, tägliches Meeting, in dem jedes Teammitglied drei Fragen beantwortet.'
+            },
+            {
+                questionText: 'Welche Fragen werden typischerweise im Daily SCRUM beantwortet?',
+                answerOptions: [
+                    { answerText: 'Wer ist schuld an Verzögerungen?', isCorrect: false },
+                    { answerText: 'Wie lange hat jeder gestern gearbeitet?', isCorrect: false },
+                    { answerText: 'Was habe ich gestern gemacht, was werde ich heute tun, gibt es Hindernisse?', isCorrect: true },
+                    { answerText: 'Wie zufrieden sind die Stakeholder mit dem Fortschritt?', isCorrect: false }
+                ],
+                explanation: 'Im Daily SCRUM beantwortet jedes Teammitglied drei Fragen: Was habe ich gestern gemacht? Was werde ich heute tun? Gibt es Hindernisse?'
+            },
+            {
+                questionText: 'Was ist ein Sprint in SCRUM?',
+                answerOptions: [
+                    { answerText: 'Ein Meeting zur Planung des Projekts', isCorrect: false },
+                    { answerText: 'Ein 1-4 Wochen langer Entwicklungszyklus', isCorrect: true },
+                    { answerText: 'Eine Methode zur Fehlersuche im Code', isCorrect: false },
+                    { answerText: 'Ein Tool zur Visualisierung des Projektfortschritts', isCorrect: false }
+                ],
+                explanation: 'Ein Sprint ist ein 1-4 Wochen langer Entwicklungszyklus mit dem Ziel, ein funktionsfähiges Produkt-Inkrement zu liefern.'
+            },
+            {
+                questionText: 'Was zeigt ein Burndown Chart?',
+                answerOptions: [
+                    { answerText: 'Die Anzahl der Fehler im Code', isCorrect: false },
+                    { answerText: 'Die Stimmung im Team', isCorrect: false },
+                    { answerText: 'Den Fortschritt des Sprints und verbleibenden Arbeitsaufwand', isCorrect: true },
+                    { answerText: 'Die Kosten des Projekts', isCorrect: false }
+                ],
+                explanation: 'Ein Burndown Chart zeigt den Fortschritt des Sprints und gibt Aufschluss über den verbleibenden Arbeitsaufwand. Es ist ein wichtiges Werkzeug zur Visualisierung des Projektfortschritts.'
+            },
+            {
+                questionText: 'Was ist ein Inkrement in SCRUM?',
+                answerOptions: [
+                    { answerText: 'Die Beschreibung der zu erledigenden Aufgaben', isCorrect: false },
+                    { answerText: 'Das fertige Produkt oder Produktbestandteil eines Sprints', isCorrect: true },
+                    { answerText: 'Eine Verbesserung des SCRUM-Prozesses', isCorrect: false },
+                    { answerText: 'Ein Treffen zur Besprechung des Projektfortschritts', isCorrect: false }
+                ],
+                explanation: 'Ein Inkrement ist das fertige Produkt oder Produktbestandteil, das am Ende eines Sprints steht. Es muss den Kriterien der Definition of Done (DoD) entsprechen.'
+            },
+            {
+                questionText: 'Was ist die Aufgabe des SCRUM Masters?',
+                answerOptions: [
+                    { answerText: 'Die technische Umsetzung des Produkts zu leiten', isCorrect: false },
+                    { answerText: 'Die Prioritäten der Produktfunktionen festzulegen', isCorrect: false },
+                    { answerText: 'Das Team zu unterstützen und Hindernisse zu beseitigen', isCorrect: true },
+                    { answerText: 'Den Kunden das fertige Produkt zu präsentieren', isCorrect: false }
+                ],
+                explanation: 'Der SCRUM Master unterstützt das Team, beseitigt Hindernisse (Impediments) und achtet darauf, dass SCRUM richtig angewendet wird. Er fördert die Selbstorganisation und agile Prinzipien.'
+            }
+        ];
+
+        // Variablen
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        // DOM-Elemente
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers-container');
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationText = document.getElementById('explanation-text');
+        const nextButton = document.getElementById('next-button');
+        const questionNumber = document.getElementById('question-number');
+        const scoreDisplay = document.getElementById('score-display');
+        const progressFill = document.getElementById('progress-fill');
+        const quizSection = document.getElementById('quiz-section');
+        const resultsSection = document.getElementById('results-section');
+        const finalScore = document.getElementById('final-score');
+        const feedbackText = document.getElementById('feedback-text');
+        const resetButton = document.getElementById('reset-button');
+
+        // Quiz starten
+        function startQuiz() {
+            showQuestion();
+        }
+
+        // Frage anzeigen
+        function showQuestion() {
+            answered = false;
+            
+            // Fortschritt aktualisieren
+            questionNumber.textContent = `Frage ${currentQuestion + 1} von ${questions.length}`;
+            progressFill.style.width = `${(currentQuestion / questions.length) * 100}%`;
+            
+            // Frage anzeigen
+            const question = questions[currentQuestion];
+            questionText.textContent = question.questionText;
+            
+            // Antworten anzeigen
+            answersContainer.innerHTML = '';
+            question.answerOptions.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.classList.add('answer-button');
+                button.textContent = answer.answerText;
+                button.addEventListener('click', () => selectAnswer(index));
+                answersContainer.appendChild(button);
+            });
+            
+            // Erklärung und Next-Button verstecken
+            explanationBox.classList.add('hidden');
+            nextButton.classList.add('hidden');
+        }
+
+        // Antwort auswählen
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            
+            const question = questions[currentQuestion];
+            const answerButtons = document.querySelectorAll('.answer-button');
+            
+            // Alle Antworten markieren
+            answerButtons.forEach((button, buttonIndex) => {
+                if (buttonIndex === index) {
+                    if (question.answerOptions[buttonIndex].isCorrect) {
+                        button.classList.add('correct');
+                        score++;
+                        scoreDisplay.textContent = `Punktestand: ${score}`;
+                    } else {
+                        button.classList.add('incorrect');
+                    }
+                } else if (question.answerOptions[buttonIndex].isCorrect) {
+                    button.classList.add('correct');
+                }
+                button.disabled = true;
+            });
+            
+            // Erklärung anzeigen
+            explanationText.textContent = question.explanation;
+            explanationBox.classList.remove('hidden');
+            
+            // Next-Button anzeigen
+            nextButton.textContent = currentQuestion < questions.length - 1 ? 'Nächste Frage' : 'Ergebnis anzeigen';
+            nextButton.classList.remove('hidden');
+        }
+
+        // Nächste Frage
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Ergebnisse anzeigen
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScore.textContent = `Ergebnis: ${score} von ${questions.length} Punkten (${percentage}%)`;
+            
+            if (score === questions.length) {
+                feedbackText.textContent = 'Perfekt! Du beherrschst die SCRUM-Grundlagen hervorragend!';
+                feedbackText.style.color = '#28a745';
+            } else if (score >= questions.length * 0.8) {
+                feedbackText.textContent = 'Sehr gut! Du hast die SCRUM-Grundlagen gut verstanden.';
+                feedbackText.style.color = '#28a745';
+            } else if (score >= questions.length * 0.6) {
+                feedbackText.textContent = 'Nicht schlecht! Du kennst die wichtigsten SCRUM-Konzepte, aber einige Punkte könntest du noch vertiefen.';
+                feedbackText.style.color = '#ffc107';
+            } else {
+                feedbackText.textContent = 'Du solltest die SCRUM-Grundlagen noch einmal durchgehen, um dein Verständnis zu verbessern.';
+                feedbackText.style.color = '#dc3545';
+            }
+        }
+
+        // Quiz zurücksetzen
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            scoreDisplay.textContent = 'Punktestand: 0';
+            resultsSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+            startQuiz();
+        }
+
+        // Event-Listener
+        nextButton.addEventListener('click', nextQuestion);
+        resetButton.addEventListener('click', resetQuiz);
+
+        // Quiz starten
+        startQuiz();
+    </script>
+</body>
+</html>
